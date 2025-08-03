@@ -83,6 +83,7 @@ export function DialogDemo() {
         isAdd: values.isAdd,
       });
       toast.success("Tạo thành công");
+      queryClient.invalidateQueries({ queryKey: ["expense", "list"] });
       setOpen(false);
     } catch (error) {
       console.error("Error creating spend:", error);

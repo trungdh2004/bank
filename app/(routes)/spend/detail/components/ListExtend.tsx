@@ -7,14 +7,17 @@ import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useParams } from "next/navigation";
 
 const ListExtend = () => {
+  const { id } = useParams();
   const { data } = useQuery({
     queryKey: ["expense", "list"],
     queryFn: async () => {
       const query = qs.stringify({
         page: 1,
         size: 100,
+        spendMonthId: id, // Assuming id is the spend month ID
       });
       const response = await axios.get<IResponsePagi<IExpense>>(
         "/api/expense?" + query
@@ -54,7 +57,7 @@ const ListExtend = () => {
 
   return (
     <div className="mt-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid lg:grid-cols-2 gap-4">
         {data?.data.map((item: any) => (
           <Card
             key={item.id}
@@ -76,6 +79,12 @@ const ListExtend = () => {
             <p className="text-sm">Năm: {item?.spendMonth?.year}</p>
           </Card>
         ))}
+
+        {data?.data.length === 0 && (
+          <div className="border border-dashed min-h-20 flex items-center justify-center col-span-full">
+            Không có ghi chép nào
+          </div>
+        )}
         {/* <Card className="p-4 gap-2 border-red-500">
           <h4 className="">$ 1,000,000</h4>
           <p className="text-sm">Thời gian: </p>

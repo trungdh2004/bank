@@ -31,6 +31,10 @@ export async function GET(request: Request) {
     orderBy: {
       createdAt: "desc",
     },
+    where: {
+      spendMonthId: searchParams.get("spendMonthId") || undefined,
+      // Add other filters if needed
+    },
     include: {
       bank: true,
       category: true,

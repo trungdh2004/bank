@@ -29,7 +29,7 @@ const ListSpend = () => {
     );
   }
   return (
-    <div className="pb-6 grid grid-cols-4 gap-4 mt-4">
+    <div className="pb-6 grid md:grid-cols-4 gap-4 mt-4">
       {data?.data?.map((spend) => (
         <Card className="gap-4 cursor-pointer" key={spend.id}>
           <div className="px-6 flex items-center justify-between">
