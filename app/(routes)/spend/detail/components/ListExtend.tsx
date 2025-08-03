@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useParams } from "next/navigation";
+import { formatCurrencyVND } from "@/lib/func";
 
 const ListExtend = () => {
   const { id } = useParams();
@@ -67,16 +68,17 @@ const ListExtend = () => {
             )}
           >
             <h4 className={cn("text-red-500", item.isAdd && "text-green-500")}>
-              Tiền: {item.amount}
+              Tiền: {item.isAdd ? "+" : "-"}
+              {formatCurrencyVND(item.amount)}
             </h4>
             <p className="text-sm">
               Thời gian: {format(new Date(item.date), "dd/MM/yyyy HH:mm:ss")}
             </p>
-            <p className="text-sm">Mô tả: {item.description}</p>
             <p className="text-sm">Danh mục: {item?.category?.name}</p>
             <p className="text-sm">Ngân hàng: {item?.bank?.name}</p>
             <p className="text-sm">Tháng: {item?.spendMonth?.month}</p>
             <p className="text-sm">Năm: {item?.spendMonth?.year}</p>
+            <p className="text-sm">Mô tả: {item.description}</p>
           </Card>
         ))}
 

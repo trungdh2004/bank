@@ -3,6 +3,14 @@ import { db } from "@/lib/prisma";
 export async function POST(request: Request) {
   const data = await request.json();
 
+  const existingSpendMonth = await db.spendMonth.findUnique({
+    where: { id: data.spendMonthId },
+  });
+
+  if (!existingSpendMonth) {
+    return Response.json({ message: "Spend month not found" }, { status: 404 });
+  }
+
   // Assuming you have a bank model in your Prisma schema
   const newBank = await db.expense.create({
     data: {
@@ -14,6 +22,29 @@ export async function POST(request: Request) {
       spendMonthId: data.spendMonthId,
       isAdd: data.isAdd, // Assuming isAdd is a boolean field in your Expense model
     },
+  });
+
+  if (!newBank) {
+    return Response.json({ message: "Failed to create bank" }, { status: 500 });
+  }
+
+  let dataUpdate = {};
+
+  if (data.isAdd) {
+    dataUpdate = {
+      total: existingSpendMonth.total + data.amount,
+      tietkiem: existingSpendMonth.tietkiem + data.amount,
+    };
+  } else {
+    dataUpdate = {
+      tieu: existingSpendMonth.tieu + data.amount,
+      tietkiem: existingSpendMonth.tietkiem - data.amount,
+    };
+  }
+
+  await db.spendMonth.update({
+    where: { id: data.spendMonthId },
+    data: dataUpdate,
   });
 
   return Response.json({ message: "Bank created successfully", data: newBank });
