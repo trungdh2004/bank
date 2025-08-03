@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expenses  Expense[] @relation("CategoryExpenses")
+
+  @@map("categories")
+}
+
+model Bank {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  expenses  Expense[] @relation("BankExpenses")
+
+  @@map("banks")
+}
+
+model Expense {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  amount    Float
+  description String?
+  date      DateTime
+
+  categoryId String? @db.ObjectId
+  bankId    String? @db.ObjectId
+  spendMonthId String? @db.ObjectId
+  isAdd Boolean 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bank     Bank?     @relation("BankExpenses", fields: [bankId], references: [id])
+  category Category? @relation("CategoryExpenses", fields: [categoryId], references: [id])
+  spendMonth SpendMonth? @relation("SpendMonths", fields: [spendMonthId], references: [id])
+
+  @@map("expenses")
+}
+
+model SpendMonth {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  month     Int
+  year      Int
+  date      String
+  total     Float
+  description String?
+  tieu Float? @default(0)
+  tietkiem Float
+  color String?
+  isRating Boolean @default(false)
+  isRun Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expenses  Expense[] @relation("SpendMonths")
+
+  @@map("spend_months")
+}
